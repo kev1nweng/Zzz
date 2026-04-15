@@ -1,0 +1,68 @@
+name: Build and Pre-release
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'README.md'
+      - 'README.en.md'
+      - '.gitignore'
+
+jobs:
+  build:
+    runs-on: macos-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode Project
+        run: xcodegen generate
+
+      - name: Build Application
+        run: |
+          xcodebuild -project Zzz.xcodeproj \
+                     -scheme Zzz \
+                     -configuration Release \
+                     -derivedDataPath ./build_data \
+                     CODE_SIGN_IDENTITY="-" \
+                     CODE_SIGNING_REQUIRED=NO \
+                     CODE_SIGNING_ALLOWED=YES
+
+      - name: Prepare DMG
+        run: |
+          mkdir -p dmg_root
+          # Copy the app to the dmg root
+          cp -R ./build_data/Build/Products/Release/Zzz.app dmg_root/
+          # Create Applications symlink
+          ln -s /Applications dmg_root/Applications
+          # Create the DMG
+          hdiutil create -volname "Zzz" -srcfolder dmg_root -ov -format UDZO Zzz.dmg
+
+      - name: Get current date
+        id: date
+        run: echo "date=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
+
+      - name: Create Pre-release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: pre-release-${{ steps.date.outputs.date }}-${{ github.sha }}
+          name: Pre-release ${{ steps.date.outputs.date }}
+          body: |
+            Automated pre-release for commit ${{ github.sha }}.
+            
+            Changes:
+            ${{ github.event.head_commit.message }}
+          draft: false
+          prerelease: true
+          files: Zzz.dmg
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
