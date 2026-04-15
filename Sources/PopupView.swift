@@ -118,6 +118,16 @@ struct PopupView: View {
                         .controlSize(.mini)
                         .labelsHidden()
                 }
+
+                HStack {
+                    Text("紧凑模式")
+                        .font(.subheadline)
+                    Spacer()
+                    Toggle("", isOn: $manager.isCompactMode)
+                        .toggleStyle(.switch)
+                        .controlSize(.mini)
+                        .labelsHidden()
+                }
             }
             .padding(16)
 

@@ -1,4 +1,5 @@
 import Foundation
+import WidgetKit
 
 @Observable
 final class BedtimeManager {
@@ -16,11 +17,12 @@ final class BedtimeManager {
 
     var showSeconds: Bool { didSet { save() } }
     var warnWhenNear: Bool { didSet { save() } }
+    var isCompactMode: Bool { didSet { save() } }
 
     var currentTime: Date = Date()
     private var timer: Timer?
 
-    private let userDefaults = UserDefaults.standard
+    private let userDefaults = UserDefaults(suiteName: "group.com.zzz.app")!
 
     private enum Keys {
         static let weekdayHour = "weekdayHour"
@@ -32,6 +34,7 @@ final class BedtimeManager {
         static let isOverrideActive = "isOverrideActive"
         static let showSeconds = "showSeconds"
         static let warnWhenNear = "warnWhenNear"
+        static let isCompactMode = "isCompactMode"
     }
     
     // SwiftUI Date proxies
@@ -122,6 +125,15 @@ final class BedtimeManager {
     var formattedRemainingTime: String {
         let r = remainingTime
         let sign = r.isPast ? "-" : ""
+        
+        if isCompactMode {
+            if r.hours > 0 {
+                return String(format: "%@%dh", sign, r.hours)
+            } else {
+                return String(format: "%@%dm", sign, r.minutes)
+            }
+        }
+        
         if showSeconds {
             return String(format: "%@%dh %02dm %02ds", sign, r.hours, r.minutes, r.seconds)
         } else {
@@ -137,7 +149,7 @@ final class BedtimeManager {
     }
 
     private init() {
-        let defaults = UserDefaults.standard
+        let defaults = UserDefaults(suiteName: "group.com.zzz.app")!
         if defaults.object(forKey: Keys.weekdayHour) == nil {
             defaults.set(22, forKey: Keys.weekdayHour)
             defaults.set(30, forKey: Keys.weekdayMinute)
@@ -148,6 +160,7 @@ final class BedtimeManager {
             defaults.set(false, forKey: Keys.isOverrideActive)
             defaults.set(false, forKey: Keys.showSeconds)
             defaults.set(true, forKey: Keys.warnWhenNear)
+            defaults.set(false, forKey: Keys.isCompactMode)
         }
 
         self.weekdayHour = defaults.integer(forKey: Keys.weekdayHour)
@@ -159,6 +172,7 @@ final class BedtimeManager {
         self.isOverrideActive = defaults.bool(forKey: Keys.isOverrideActive)
         self.showSeconds = defaults.bool(forKey: Keys.showSeconds)
         self.warnWhenNear = defaults.bool(forKey: Keys.warnWhenNear)
+        self.isCompactMode = defaults.bool(forKey: Keys.isCompactMode)
         
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             self?.currentTime = Date()
@@ -175,6 +189,10 @@ final class BedtimeManager {
         userDefaults.set(isOverrideActive, forKey: Keys.isOverrideActive)
         userDefaults.set(showSeconds, forKey: Keys.showSeconds)
         userDefaults.set(warnWhenNear, forKey: Keys.warnWhenNear)
+        userDefaults.set(isCompactMode, forKey: Keys.isCompactMode)
+        
+        // 通知小组件刷新
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     func resetToDefaults() {
@@ -187,5 +205,6 @@ final class BedtimeManager {
         isOverrideActive = false
         showSeconds = false
         warnWhenNear = true
+        isCompactMode = false
     }
 }

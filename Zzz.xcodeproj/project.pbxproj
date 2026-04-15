@@ -8,18 +8,47 @@
 
 /* Begin PBXBuildFile section */
 		260FF98403C05FC7FBEFB721 /* PopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7590202B1BE4A2A5ABF0BC0C /* PopupView.swift */; };
+		3151F430EA7228D4E3916210 /* ZzzWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68291A36C6F05E7EFD4A91A5 /* ZzzWidget.swift */; };
 		417A536A81555600A6EB303D /* StatusBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965D1B616165DF1B033F08D4 /* StatusBarController.swift */; };
 		882F876B3FBFABB827548583 /* BedtimeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 803D5C9007280CA0F0EEE7CF /* BedtimeManager.swift */; };
+		A45CD8C5E20C349F5A613A10 /* ZzzWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = ECA2293C139333A1D9569F36 /* ZzzWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		AE6F25B2E10A0373036F11ED /* BedtimeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 803D5C9007280CA0F0EEE7CF /* BedtimeManager.swift */; };
 		BBB424DA3DAF75979EBBAA15 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3A205BD7386C8405912B20 /* AppDelegate.swift */; };
 		C3A57AECFE8EF3A101E5735B /* ZzzApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C850A113C2F33037412F834 /* ZzzApp.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		457A7E00CE9F7ABD5D7A289C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BE1CD613BBBA578EF002EEA8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BF9D43B7D26423B318C8581;
+			remoteInfo = ZzzWidget;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D02FCD8F4EB7B4D1A139CA3B /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				A45CD8C5E20C349F5A613A10 /* ZzzWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		3C850A113C2F33037412F834 /* ZzzApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZzzApp.swift; sourceTree = "<group>"; };
+		68291A36C6F05E7EFD4A91A5 /* ZzzWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZzzWidget.swift; sourceTree = "<group>"; };
 		7590202B1BE4A2A5ABF0BC0C /* PopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupView.swift; sourceTree = "<group>"; };
 		803D5C9007280CA0F0EEE7CF /* BedtimeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BedtimeManager.swift; sourceTree = "<group>"; };
 		965D1B616165DF1B033F08D4 /* StatusBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarController.swift; sourceTree = "<group>"; };
 		AEC808595BF87CEE8D809D64 /* Zzz.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zzz.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		ECA2293C139333A1D9569F36 /* ZzzWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ZzzWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		FC3A205BD7386C8405912B20 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -40,14 +69,25 @@
 			isa = PBXGroup;
 			children = (
 				AEC808595BF87CEE8D809D64 /* Zzz.app */,
+				ECA2293C139333A1D9569F36 /* ZzzWidget.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		8EBA43BFBD0738AEFA9B641F /* Widget */ = {
+			isa = PBXGroup;
+			children = (
+				68291A36C6F05E7EFD4A91A5 /* ZzzWidget.swift */,
+			);
+			name = Widget;
+			path = Sources/Widget;
 			sourceTree = "<group>";
 		};
 		FFF3C9824EEEC986FF6ADC1E = {
 			isa = PBXGroup;
 			children = (
 				403938426FC7B88A7BB18383 /* Sources */,
+				8EBA43BFBD0738AEFA9B641F /* Widget */,
 				67873D25BDEB0A40A0A59913 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -55,15 +95,34 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		5BF9D43B7D26423B318C8581 /* ZzzWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9EDCD2EA0A17E9DB2AD3C031 /* Build configuration list for PBXNativeTarget "ZzzWidget" */;
+			buildPhases = (
+				059EE666D409277AFD3C2633 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ZzzWidget;
+			packageProductDependencies = (
+			);
+			productName = ZzzWidget;
+			productReference = ECA2293C139333A1D9569F36 /* ZzzWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		7018F4350AC955C5A66593C5 /* Zzz */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0D19B6CEF1FFCD2DE588B12F /* Build configuration list for PBXNativeTarget "Zzz" */;
 			buildPhases = (
 				F33DCC2F781F2D9146F0ED85 /* Sources */,
+				D02FCD8F4EB7B4D1A139CA3B /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				8257B68E7921884B79D00319 /* PBXTargetDependency */,
 			);
 			name = Zzz;
 			packageProductDependencies = (
@@ -81,6 +140,10 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
+					5BF9D43B7D26423B318C8581 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Manual;
+					};
 					7018F4350AC955C5A66593C5 = {
 						DevelopmentTeam = "";
 						ProvisioningStyle = Manual;
@@ -102,11 +165,21 @@
 			projectRoot = "";
 			targets = (
 				7018F4350AC955C5A66593C5 /* Zzz */,
+				5BF9D43B7D26423B318C8581 /* ZzzWidget */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		059EE666D409277AFD3C2633 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AE6F25B2E10A0373036F11ED /* BedtimeManager.swift in Sources */,
+				3151F430EA7228D4E3916210 /* ZzzWidget.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F33DCC2F781F2D9146F0ED85 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -121,11 +194,20 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		8257B68E7921884B79D00319 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BF9D43B7D26423B318C8581 /* ZzzWidget */;
+			targetProxy = 457A7E00CE9F7ABD5D7A289C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
 		106BDCACBA5E8F91EA40D392 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Resources/Zzz.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
@@ -200,6 +282,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Resources/Zzz.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
@@ -208,6 +291,25 @@
 				SDKROOT = macosx;
 			};
 			name = Release;
+		};
+		3192498F16344798D06F1FA4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Resources/Zzz.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Resources/Widget-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.zzz.app.widget;
+				PRODUCT_NAME = ZzzWidget;
+				SDKROOT = macosx;
+			};
+			name = Debug;
 		};
 		7D8CFC74EB87133EDB6C56C9 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -277,6 +379,25 @@
 			};
 			name = Debug;
 		};
+		94E602067A9B418AC25CBDD8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Resources/Zzz.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Resources/Widget-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.zzz.app.widget;
+				PRODUCT_NAME = ZzzWidget;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -294,6 +415,15 @@
 			buildConfigurations = (
 				7D8CFC74EB87133EDB6C56C9 /* Debug */,
 				22DFAB1E4E01DCD502607C01 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		9EDCD2EA0A17E9DB2AD3C031 /* Build configuration list for PBXNativeTarget "ZzzWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3192498F16344798D06F1FA4 /* Debug */,
+				94E602067A9B418AC25CBDD8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

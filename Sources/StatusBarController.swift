@@ -20,7 +20,8 @@ final class StatusBarController: NSObject {
     private func configureStatusItem() {
         guard let button = statusItem.button else { return }
         button.target = self
-        button.action = #selector(togglePopover)
+        button.action = #selector(handleStatusItemClick)
+        button.sendAction(on: [.leftMouseUp, .rightMouseUp])
         button.title = ""
     }
 
@@ -34,13 +35,17 @@ final class StatusBarController: NSObject {
     func refresh() {
         guard let button = statusItem.button else { return }
 
-        let image = NSImage(systemSymbolName: "bed.double.badge.checkmark.fill", accessibilityDescription: nil)
-        image?.isTemplate = true
-        button.image = image
-        button.imageScaling = .scaleProportionallyDown
-        
-        let text = "  \(manager.formattedRemainingTime)"
+        let text = manager.isCompactMode ? manager.formattedRemainingTime : "  \(manager.formattedRemainingTime)"
         let font = NSFont.monospacedDigitSystemFont(ofSize: 13, weight: .medium)
+        
+        if manager.isCompactMode {
+            button.image = nil
+        } else {
+            let image = NSImage(systemSymbolName: "bed.double.badge.checkmark.fill", accessibilityDescription: nil)
+            image?.isTemplate = true
+            button.image = image
+            button.imageScaling = .scaleProportionallyDown
+        }
         
         if manager.shouldShowRed {
             // 1. 设置文本颜色
@@ -51,15 +56,31 @@ final class StatusBarController: NSObject {
             button.attributedTitle = NSAttributedString(string: text, attributes: attributes)
             
             // 2. 设置图标颜色 (手动染色)
-            if let baseImage = button.image {
+            if !manager.isCompactMode, let baseImage = button.image {
                 button.image = baseImage.tinted(with: .systemRed)
             }
         } else {
             button.attributedTitle = NSAttributedString(string: "")
             button.title = text
             button.font = font
-            button.image?.isTemplate = true
+            if !manager.isCompactMode {
+                button.image?.isTemplate = true
+            }
             button.contentTintColor = nil
+        }
+    }
+
+    @objc private func handleStatusItemClick() {
+        let event = NSApp.currentEvent
+        
+        if event?.type == .rightMouseUp {
+            let menu = NSMenu()
+            menu.addItem(NSMenuItem(title: "退出 Zzz", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
+            statusItem.menu = menu
+            statusItem.button?.performClick(nil)
+            statusItem.menu = nil // 清除菜单，下次点击依然由 button 响应
+        } else {
+            togglePopover()
         }
     }
 
