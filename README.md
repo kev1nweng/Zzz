@@ -1,8 +1,8 @@
-[English Version](./README.en.md)
-
 # Zzz
 
 Zzz 是一款 macOS 极简菜单栏就寝倒计时工具，旨在通过原生优雅的界面，提醒你准时休息。
+
+[English Version](./README.en.md)
 
 ## 核心功能
 

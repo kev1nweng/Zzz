@@ -1,8 +1,8 @@
-[中文版](./README.md)
-
 # Zzz
 
 Zzz is a minimalist macOS menu bar countdown tool designed to remind you of your bedtime with a native and elegant interface.
+
+[中文版](./README.md)
 
 ## Key Features
 
