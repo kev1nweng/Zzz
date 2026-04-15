@@ -1,38 +1,40 @@
+[English Version](./README.en.md)
+
 # Zzz
 
-Zzz is a minimalist macOS menu bar application designed to help you track your remaining time before bedtime with a native and elegant interface.
+Zzz 是一款专为 macOS 设计的极简菜单栏应用，通过原生且优雅的界面，帮助你实时查看距离就寝时间的剩余小时与分钟。
 
-## Key Features
+## 核心功能
 
-- Native macOS Experience: Built using SwiftUI and AppKit with system-standard liquid glass materials and transitions.
-- Smart Bedtime Algorithm: Automatically handles sleep schedules that cross into the next day (using an 8 AM logic split). It distinguishes between weekday and weekend nights.
-- Temporary Override: Quickly set a one-time bedtime for the current night without affecting your recurring settings.
-- Menu Bar Display: A real-time countdown directly in your status bar. It includes a compact mode that hides the icon and simplifies the time display (hours only, or minutes when under an hour).
-- Desktop Widget: A WidgetKit-powered desktop widget that stays in sync with your main application settings via App Groups.
-- Visual Alerts: The countdown turns red when you are within one hour of bedtime or if you have stayed up past your scheduled time.
-- Right-click Context Menu: Provides a quick way to quit the application directly from the menu bar.
+- 原生 macOS 体验：完全使用 SwiftUI 和 AppKit 构建，采用系统标准的毛玻璃材质与丝滑动画。
+- 智能就寝算法：自动处理跨越凌晨的作息时间（以早晨 8 点作为逻辑分割点），并能自动识别工作日与周末的不同设置。
+- 临时覆盖：可以为当晚设置一次性的就寝时间，而不影响你的常规作息计划。
+- 菜单栏显示：直接在状态栏显示实时倒计时。支持紧凑模式（隐藏图标，仅显示精简时间，小于一小时自动切换为分钟显示）。
+- 桌面小组件：基于 WidgetKit 的桌面小组件，通过 App Group 与主应用保持设置同步。
+- 视觉警报：当距离就寝不到一小时或已经超过就寝时间时，倒计时会自动变红。
+- 右键快捷退出：在菜单栏图标上点击右键即可快速退出程序。
 
-## Installation
+## 安装方法
 
-1. Download the Zzz.dmg from the releases or build it from source.
-2. Open the DMG and drag Zzz to your Applications folder.
-3. Launch the application to see the countdown in your menu bar.
+1. 从 Release 页面下载 Zzz.dmg 或自行从源码构建。
+2. 打开 DMG 文件，将 Zzz 拖入 Applications 应用程序文件夹。
+3. 启动应用，即可在菜单栏看到倒计时。
 
-## Development
+## 开发与构建
 
-### Requirements
+### 环境要求
 
-- macOS 14.0 or later
-- Xcode 15.0 or later
+- macOS 14.0 或更高版本
+- Xcode 15.0 或更高版本
 - XcodeGen
 
-### Building from Source
+### 从源码构建
 
-1. Clone the repository.
-2. Install XcodeGen if you haven't already: `brew install xcodegen`.
-3. Generate the Xcode project by running: `xcodegen generate`.
-4. Open `Zzz.xcodeproj` and build the project using the Zzz scheme.
+1. 克隆本仓库。
+2. 安装 XcodeGen（如果尚未安装）：`brew install xcodegen`。
+3. 在项目根目录执行：`xcodegen generate` 以生成 Xcode 工程。
+4. 打开 `Zzz.xcodeproj`，选择 Zzz 方案并进行构建。
 
-## License
+## 许可证
 
 MIT License
