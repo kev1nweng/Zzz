@@ -6,7 +6,7 @@
 	<true/>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.com.zzz.app</string>
+		<string>group.space.kev1nweng.zzz</string>
 	</array>
 </dict>
 </plist>

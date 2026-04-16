@@ -1,0 +1,21 @@
+{
+  "" : {
+    "const-values" : "/Users/kw/项目/Zzz/build_data/Build/Intermediates.noindex/Zzz.build/Release/ZzzWidget.build/Objects-normal/x86_64/ZzzWidget-primary.swiftconstvalues",
+    "dependencies" : "/Users/kw/项目/Zzz/build_data/Build/Intermediates.noindex/Zzz.build/Release/ZzzWidget.build/Objects-normal/x86_64/ZzzWidget-primary.d",
+    "diagnostics" : "/Users/kw/项目/Zzz/build_data/Build/Intermediates.noindex/Zzz.build/Release/ZzzWidget.build/Objects-normal/x86_64/ZzzWidget-primary.dia",
+    "emit-module-dependencies" : "/Users/kw/项目/Zzz/build_data/Build/Intermediates.noindex/Zzz.build/Release/ZzzWidget.build/Objects-normal/x86_64/ZzzWidget-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/kw/项目/Zzz/build_data/Build/Intermediates.noindex/Zzz.build/Release/ZzzWidget.build/Objects-normal/x86_64/ZzzWidget-primary-emit-module.dia",
+    "pch" : "/Users/kw/项目/Zzz/build_data/Build/Intermediates.noindex/Zzz.build/Release/ZzzWidget.build/Objects-normal/x86_64/ZzzWidget-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/kw/项目/Zzz/build_data/Build/Intermediates.noindex/Zzz.build/Release/ZzzWidget.build/Objects-normal/x86_64/ZzzWidget-primary.swiftdeps"
+  },
+  "/Users/kw/项目/Zzz/Sources/BedtimeManager.swift" : {
+    "index-unit-output-path" : "/Zzz.build/Release/ZzzWidget.build/Objects-normal/x86_64/BedtimeManager.o",
+    "llvm-bc" : "/Users/kw/项目/Zzz/build_data/Build/Intermediates.noindex/Zzz.build/Release/ZzzWidget.build/Objects-normal/x86_64/BedtimeManager.bc",
+    "object" : "/Users/kw/项目/Zzz/build_data/Build/Intermediates.noindex/Zzz.build/Release/ZzzWidget.build/Objects-normal/x86_64/BedtimeManager.o"
+  },
+  "/Users/kw/项目/Zzz/Sources/Widget/ZzzWidget.swift" : {
+    "index-unit-output-path" : "/Zzz.build/Release/ZzzWidget.build/Objects-normal/x86_64/ZzzWidget.o",
+    "llvm-bc" : "/Users/kw/项目/Zzz/build_data/Build/Intermediates.noindex/Zzz.build/Release/ZzzWidget.build/Objects-normal/x86_64/ZzzWidget.bc",
+    "object" : "/Users/kw/项目/Zzz/build_data/Build/Intermediates.noindex/Zzz.build/Release/ZzzWidget.build/Objects-normal/x86_64/ZzzWidget.o"
+  }
+}

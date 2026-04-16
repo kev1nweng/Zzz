@@ -13,7 +13,6 @@ struct Provider: TimelineProvider {
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
         let manager = BedtimeManager.shared
-        // 小组件每 15 分钟刷新一次设置（倒计时本身是实时变化的，不需要频繁刷新代码）
         let timeline = Timeline(entries: [BedtimeEntry(date: Date(), manager: manager)], policy: .after(Date().addingTimeInterval(900)))
         completion(timeline)
     }
@@ -27,65 +26,68 @@ struct BedtimeEntry: TimelineEntry {
 struct ZzzWidgetEntryView : View {
     var entry: Provider.Entry
     
-    // 我们需要计算目标就寝时间，以便给 Text(style: .timer) 使用
-    private var targetDate: Date {
-        // 这里简化逻辑，获取当前的 targetDate
-        // 注意：小组件运行在独立进程，通过 App Group 读取 UserDefaults
-        let calendar = Calendar.current
-        let now = Date()
-        let hour = calendar.component(.hour, from: now)
-        let baseDate = hour < 8 ? calendar.date(byAdding: .day, value: -1, to: now)! : now
-        let comps = calendar.dateComponents([.year, .month, .day, .weekday], from: baseDate)
-        
-        let isWeekendNight = (comps.weekday == 6 || comps.weekday == 7)
-        let tHour = entry.manager.isOverrideActive ? entry.manager.overrideHour : (isWeekendNight ? entry.manager.weekendHour : entry.manager.weekdayHour)
-        let tMin = entry.manager.isOverrideActive ? entry.manager.overrideMinute : (isWeekendNight ? entry.manager.weekendMinute : entry.manager.weekdayMinute)
-        
-        var targetComps = DateComponents()
-        targetComps.year = comps.year
-        targetComps.month = comps.month
-        targetComps.day = comps.day
-        targetComps.hour = tHour
-        targetComps.minute = tMin
-        targetComps.second = 0
-        
-        var d = calendar.date(from: targetComps) ?? now
-        if tHour < 8 { d = calendar.date(byAdding: .day, value: 1, to: d)! }
-        return d
-    }
-
-    private var isPast: Bool {
-        Date() > targetDate
+    private var nearest: (event: CountdownEvent, date: Date)? {
+        entry.manager.nearestEvent()
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 6) {
                 Image(systemName: "bed.double.fill")
-                    .font(.system(size: 14))
+                    .font(.system(size: 12))
                 Text("Zzz")
-                    .font(.system(.caption, design: .rounded))
+                    .font(.system(.caption2, design: .rounded))
                     .fontWeight(.bold)
+                Spacer()
+                if let nearest = nearest {
+                    Text(nearest.event.name)
+                        .font(.system(size: 9))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
             }
-            .foregroundStyle(isPast ? .red : .secondary)
+            .foregroundStyle(entry.manager.shouldShowRed ? .red : .secondary)
             
-            Spacer()
-            
-            if isPast {
-                Text("已超时")
-                    .font(.system(.title3, design: .rounded))
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.red)
+            if let nearest = nearest {
+                if Date() > nearest.date {
+                    Text("已超时")
+                        .font(.system(.title3, design: .rounded))
+                        .fontWeight(.bold)
+                        .foregroundStyle(.red)
+                } else {
+                    Text(nearest.date, style: .timer)
+                        .font(.system(size: 26, weight: .bold, design: .monospaced))
+                        .minimumScaleFactor(0.7)
+                        .foregroundStyle(entry.manager.shouldShowRed ? .red : .primary)
+                }
             } else {
-                Text(targetDate, style: .timer)
-                    .font(.system(size: 24, weight: .semibold, design: .monospaced))
-                    .minimumScaleFactor(0.8)
-                    .foregroundStyle(entry.manager.shouldShowRed ? .red : .primary)
+                Text("--:--")
+                    .font(.system(size: 26, weight: .bold, design: .monospaced))
+                    .foregroundStyle(.tertiary)
             }
             
-            Text("距离就寝")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
+            Spacer(minLength: 0)
+            
+            VStack(alignment: .leading, spacing: 3) {
+                let sortedEvents = entry.manager.events
+                    .filter { $0.isEnabled }
+                    .sorted { ($0.hour, $0.minute) < ($1.hour, $1.minute) }
+                
+                ForEach(sortedEvents.prefix(2)) { event in
+                    HStack {
+                        Circle()
+                            .fill(nearest?.event.id == event.id ? (entry.manager.shouldShowRed ? Color.red : Color.primary) : Color.secondary.opacity(0.3))
+                            .frame(width: 4, height: 4)
+                        
+                        Text(event.name)
+                            .lineLimit(1)
+                        Spacer()
+                        Text(String(format: "%02d:%02d", event.hour, event.minute))
+                            .foregroundStyle(.secondary)
+                    }
+                    .font(.system(size: 10, weight: nearest?.event.id == event.id ? .medium : .regular))
+                }
+            }
         }
         .containerBackground(.ultraThinMaterial, for: .widget)
     }
@@ -100,7 +102,7 @@ struct ZzzWidget: Widget {
             ZzzWidgetEntryView(entry: entry)
         }
         .configurationDisplayName("就寝倒计时")
-        .description("在桌面上实时查看距离睡觉还有多久。")
+        .description("在桌面上实时查看所有倒计时点。")
         .supportedFamilies([.systemSmall])
     }
 }

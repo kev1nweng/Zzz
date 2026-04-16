@@ -1,20 +1,28 @@
 import Foundation
 import WidgetKit
 
+struct CountdownEvent: Identifiable, Codable {
+    var id: UUID
+    var name: String
+    var hour: Int
+    var minute: Int
+    var repeatDays: Set<Int> // 1 (Sun) to 7 (Sat)
+    var isEnabled: Bool
+    
+    var timeDate: Date {
+        var comps = Calendar.current.dateComponents([.year, .month, .day], from: Date())
+        comps.hour = hour
+        comps.minute = minute
+        comps.second = 0
+        return Calendar.current.date(from: comps) ?? Date()
+    }
+}
+
 @Observable
 final class BedtimeManager {
     static let shared = BedtimeManager()
 
-    var weekdayHour: Int { didSet { save() } }
-    var weekdayMinute: Int { didSet { save() } }
-    
-    var weekendHour: Int { didSet { save() } }
-    var weekendMinute: Int { didSet { save() } }
-    
-    var overrideHour: Int { didSet { save() } }
-    var overrideMinute: Int { didSet { save() } }
-    var isOverrideActive: Bool { didSet { save() } }
-
+    var events: [CountdownEvent] = [] { didSet { save() } }
     var showSeconds: Bool { didSet { save() } }
     var warnWhenNear: Bool { didSet { save() } }
     var isCompactMode: Bool { didSet { save() } }
@@ -22,123 +30,103 @@ final class BedtimeManager {
     var currentTime: Date = Date()
     private var timer: Timer?
 
-    private let userDefaults = UserDefaults(suiteName: "group.com.zzz.app")!
+    private let userDefaults = UserDefaults(suiteName: "group.space.kev1nweng.zzz")!
 
     private enum Keys {
+        static let events = "events"
+        static let showSeconds = "showSeconds"
+        static let warnWhenNear = "warnWhenNear"
+        static let isCompactMode = "isCompactMode"
+        
         static let weekdayHour = "weekdayHour"
         static let weekdayMinute = "weekdayMinute"
         static let weekendHour = "weekendHour"
         static let weekendMinute = "weekendMinute"
-        static let overrideHour = "overrideHour"
-        static let overrideMinute = "overrideMinute"
-        static let isOverrideActive = "isOverrideActive"
-        static let showSeconds = "showSeconds"
-        static let warnWhenNear = "warnWhenNear"
-        static let isCompactMode = "isCompactMode"
     }
     
-    // SwiftUI Date proxies
-    private func dateFrom(hour: Int, minute: Int) -> Date {
-        var comps = Calendar.current.dateComponents([.year, .month, .day], from: Date())
-        comps.hour = hour
-        comps.minute = minute
-        return Calendar.current.date(from: comps) ?? Date()
-    }
-    
-    private func extractTime(from date: Date) -> (hour: Int, minute: Int) {
-        let comps = Calendar.current.dateComponents([.hour, .minute], from: date)
-        return (comps.hour ?? 0, comps.minute ?? 0)
-    }
-
-    var weekdayDate: Date {
-        get { dateFrom(hour: weekdayHour, minute: weekdayMinute) }
-        set { let t = extractTime(from: newValue); weekdayHour = t.hour; weekdayMinute = t.minute }
-    }
-    
-    var weekendDate: Date {
-        get { dateFrom(hour: weekendHour, minute: weekendMinute) }
-        set { let t = extractTime(from: newValue); weekendHour = t.hour; weekendMinute = t.minute }
-    }
-    
-    var overrideDate: Date {
-        get { dateFrom(hour: overrideHour, minute: overrideMinute) }
-        set { let t = extractTime(from: newValue); overrideHour = t.hour; overrideMinute = t.minute }
-    }
-
-    var remainingTime: (hours: Int, minutes: Int, seconds: Int, isPast: Bool) {
+    private func targetDate(for event: CountdownEvent, relativeTo baseDate: Date) -> Date {
         let calendar = Calendar.current
+        var comps = calendar.dateComponents([.year, .month, .day], from: baseDate)
+        comps.hour = event.hour
+        comps.minute = event.minute
+        comps.second = 0
         
-        // 1. 确定逻辑基准日 (Base Date)
-        // 如果现在是凌晨 8 点前，逻辑上属于前一个作息周期
+        var date = calendar.date(from: comps) ?? baseDate
+        if event.hour < 4 || (event.hour == 4 && event.minute < 30) {
+            date = calendar.date(byAdding: .day, value: 1, to: date)!
+        }
+        return date
+    }
+
+    func nearestEvent() -> (event: CountdownEvent, date: Date)? {
+        let calendar = Calendar.current
         let currentHour = calendar.component(.hour, from: currentTime)
-        let baseDate = currentHour < 8 
-            ? calendar.date(byAdding: .day, value: -1, to: currentTime)! 
-            : currentTime
+        let currentMin = calendar.component(.minute, from: currentTime)
         
-        let baseComps = calendar.dateComponents([.year, .month, .day, .weekday], from: baseDate)
+        let isEarlyMorning = currentHour < 4 || (currentHour == 4 && currentMin < 30)
+        let baseDate = isEarlyMorning ? calendar.date(byAdding: .day, value: -1, to: currentTime)! : currentTime
+        let baseComps = calendar.dateComponents([.weekday], from: baseDate)
+        let weekday = baseComps.weekday ?? 1
         
-        // 2. 根据基准日判定使用工作日还是周末设置 (周五、周六晚上算周末)
-        let isWeekendNight = (baseComps.weekday == 6 || baseComps.weekday == 7)
+        let activeEvents = events.filter { $0.isEnabled && $0.repeatDays.contains(weekday) }
+        if activeEvents.isEmpty { return nil }
         
-        let targetHour: Int
-        let targetMinute: Int
-        if isOverrideActive {
-            targetHour = overrideHour
-            targetMinute = overrideMinute
-        } else {
-            targetHour = isWeekendNight ? weekendHour : weekdayHour
-            targetMinute = isWeekendNight ? weekendMinute : weekdayMinute
+        let eventDates = activeEvents.map { (event: $0, date: targetDate(for: $0, relativeTo: baseDate)) }
+            .sorted { $0.date < $1.date }
+        
+        let past = eventDates.filter { $0.date <= currentTime }
+        let upcoming = eventDates.filter { $0.date > currentTime }
+        
+        if let lastPast = past.last {
+            let timeSinceExpiry = currentTime.timeIntervalSince(lastPast.date)
+            if timeSinceExpiry < 3600 {
+                if let nextUpcoming = upcoming.first {
+                    let timeUntilNext = nextUpcoming.date.timeIntervalSince(currentTime)
+                    if timeUntilNext < 1800 {
+                        return nextUpcoming
+                    }
+                }
+                return lastPast
+            }
         }
         
-        // 3. 计算目标绝对时间
-        var targetComps = DateComponents()
-        targetComps.year = baseComps.year
-        targetComps.month = baseComps.month
-        targetComps.day = baseComps.day
-        targetComps.hour = targetHour
-        targetComps.minute = targetMinute
-        targetComps.second = 0
-        
-        var targetDate = calendar.date(from: targetComps) ?? currentTime
-        
-        // 如果目标睡觉时间设置在凌晨 (0-7点)，它实际上是逻辑基准日的第二天凌晨
-        if targetHour < 8 {
-            targetDate = calendar.date(byAdding: .day, value: 1, to: targetDate)!
+        if let firstUpcoming = upcoming.first {
+            return firstUpcoming
         }
         
-        // 4. 计算与当前时间的差值
-        if currentTime > targetDate {
-            let overdue = currentTime.timeIntervalSince(targetDate)
+        return past.last
+    }
+
+    var remainingTime: (hours: Int, minutes: Int, seconds: Int, isPast: Bool, eventName: String?) {
+        guard let nearest = nearestEvent() else {
+            return (0, 0, 0, false, nil)
+        }
+        
+        let targetTime = nearest.date
+        if currentTime > targetTime {
+            let overdue = currentTime.timeIntervalSince(targetTime)
             let hours = Int(overdue) / 3600
             let minutes = (Int(overdue) % 3600) / 60
             let seconds = Int(overdue) % 60
-            return (hours, minutes, seconds, true)
+            return (hours, minutes, seconds, true, nearest.event.name)
         } else {
-            let interval = targetDate.timeIntervalSince(currentTime)
+            let interval = targetTime.timeIntervalSince(currentTime)
             let hours = Int(interval) / 3600
             let minutes = (Int(interval) % 3600) / 60
             let seconds = Int(interval) % 60
-            return (hours, minutes, seconds, false)
+            return (hours, minutes, seconds, false, nearest.event.name)
         }
     }
 
     var formattedRemainingTime: String {
         let r = remainingTime
         let sign = r.isPast ? "-" : ""
-        
         if isCompactMode {
-            if r.hours > 0 {
-                return String(format: "%@%dh", sign, r.hours)
-            } else {
-                return String(format: "%@%dm", sign, r.minutes)
-            }
+            if r.hours > 0 { return String(format: "%@%dh", sign, r.hours) }
+            else { return String(format: "%@%dm", sign, r.minutes) }
         }
-        
-        if showSeconds {
-            return String(format: "%@%dh %02dm %02ds", sign, r.hours, r.minutes, r.seconds)
-        } else {
-            return String(format: "%@%dh %02dm", sign, r.hours, r.minutes)
-        }
+        if showSeconds { return String(format: "%@%dh %02dm %02ds", sign, r.hours, r.minutes, r.seconds) }
+        else { return String(format: "%@%dh %02dm", sign, r.hours, r.minutes) }
     }
 
     var shouldShowRed: Bool {
@@ -149,30 +137,21 @@ final class BedtimeManager {
     }
 
     private init() {
-        let defaults = UserDefaults(suiteName: "group.com.zzz.app")!
-        if defaults.object(forKey: Keys.weekdayHour) == nil {
-            defaults.set(22, forKey: Keys.weekdayHour)
-            defaults.set(30, forKey: Keys.weekdayMinute)
-            defaults.set(23, forKey: Keys.weekendHour)
-            defaults.set(30, forKey: Keys.weekendMinute)
-            defaults.set(22, forKey: Keys.overrideHour)
-            defaults.set(0, forKey: Keys.overrideMinute)
-            defaults.set(false, forKey: Keys.isOverrideActive)
-            defaults.set(false, forKey: Keys.showSeconds)
-            defaults.set(true, forKey: Keys.warnWhenNear)
-            defaults.set(false, forKey: Keys.isCompactMode)
-        }
-
-        self.weekdayHour = defaults.integer(forKey: Keys.weekdayHour)
-        self.weekdayMinute = defaults.integer(forKey: Keys.weekdayMinute)
-        self.weekendHour = defaults.integer(forKey: Keys.weekendHour)
-        self.weekendMinute = defaults.integer(forKey: Keys.weekendMinute)
-        self.overrideHour = defaults.integer(forKey: Keys.overrideHour)
-        self.overrideMinute = defaults.integer(forKey: Keys.overrideMinute)
-        self.isOverrideActive = defaults.bool(forKey: Keys.isOverrideActive)
+        let defaults = UserDefaults(suiteName: "group.space.kev1nweng.zzz")!
         self.showSeconds = defaults.bool(forKey: Keys.showSeconds)
-        self.warnWhenNear = defaults.bool(forKey: Keys.warnWhenNear)
+        self.warnWhenNear = defaults.object(forKey: Keys.warnWhenNear) == nil ? true : defaults.bool(forKey: Keys.warnWhenNear)
         self.isCompactMode = defaults.bool(forKey: Keys.isCompactMode)
+        
+        if let data = defaults.data(forKey: Keys.events),
+           let decoded = try? JSONDecoder().decode([CountdownEvent].self, from: data) {
+            self.events = decoded
+        } else {
+            self.events = [
+                CountdownEvent(id: UUID(), name: "工作日", hour: 22, minute: 30, repeatDays: [2,3,4,5,6], isEnabled: true),
+                CountdownEvent(id: UUID(), name: "周末", hour: 23, minute: 30, repeatDays: [7,1], isEnabled: true)
+            ]
+            save()
+        }
         
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             self?.currentTime = Date()
@@ -180,31 +159,27 @@ final class BedtimeManager {
     }
 
     private func save() {
-        userDefaults.set(weekdayHour, forKey: Keys.weekdayHour)
-        userDefaults.set(weekdayMinute, forKey: Keys.weekdayMinute)
-        userDefaults.set(weekendHour, forKey: Keys.weekendHour)
-        userDefaults.set(weekendMinute, forKey: Keys.weekendMinute)
-        userDefaults.set(overrideHour, forKey: Keys.overrideHour)
-        userDefaults.set(overrideMinute, forKey: Keys.overrideMinute)
-        userDefaults.set(isOverrideActive, forKey: Keys.isOverrideActive)
+        if let data = try? JSONEncoder().encode(events) {
+            userDefaults.set(data, forKey: Keys.events)
+        }
         userDefaults.set(showSeconds, forKey: Keys.showSeconds)
         userDefaults.set(warnWhenNear, forKey: Keys.warnWhenNear)
         userDefaults.set(isCompactMode, forKey: Keys.isCompactMode)
-        
-        // 通知小组件刷新
+        userDefaults.synchronize()
         WidgetCenter.shared.reloadAllTimelines()
     }
 
     func resetToDefaults() {
-        weekdayHour = 22
-        weekdayMinute = 30
-        weekendHour = 23
-        weekendMinute = 30
-        overrideHour = 22
-        overrideMinute = 0
-        isOverrideActive = false
+        events = [
+            CountdownEvent(id: UUID(), name: "工作日", hour: 22, minute: 30, repeatDays: [2,3,4,5,6], isEnabled: true),
+            CountdownEvent(id: UUID(), name: "周末", hour: 23, minute: 30, repeatDays: [7,1], isEnabled: true)
+        ]
         showSeconds = false
         warnWhenNear = true
         isCompactMode = false
+    }
+
+    func removeEvent(id: UUID) {
+        events.removeAll { $0.id == id }
     }
 }

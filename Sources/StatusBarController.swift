@@ -28,7 +28,7 @@ final class StatusBarController: NSObject {
     private func configurePopover() {
         popover.behavior = .transient
         popover.animates = true
-        popover.contentSize = NSSize(width: 280, height: 260)
+        popover.contentSize = NSSize(width: 280, height: 450)
         popover.contentViewController = NSHostingController(rootView: PopupView())
     }
 
@@ -88,7 +88,9 @@ final class StatusBarController: NSObject {
         if popover.isShown {
             popover.performClose(nil)
         } else if let button = statusItem.button {
+            NSApp.activate(ignoringOtherApps: true)
             popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+            popover.contentViewController?.view.window?.makeKey()
         }
     }
 

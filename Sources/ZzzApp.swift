@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct BedtimeBarApp: App {
+struct ZzzApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 
     var body: some Scene {

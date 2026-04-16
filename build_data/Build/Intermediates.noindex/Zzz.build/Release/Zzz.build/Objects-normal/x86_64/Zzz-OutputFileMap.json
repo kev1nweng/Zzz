@@ -1,0 +1,36 @@
+{
+  "" : {
+    "const-values" : "/Users/kw/项目/Zzz/build_data/Build/Intermediates.noindex/Zzz.build/Release/Zzz.build/Objects-normal/x86_64/Zzz-primary.swiftconstvalues",
+    "dependencies" : "/Users/kw/项目/Zzz/build_data/Build/Intermediates.noindex/Zzz.build/Release/Zzz.build/Objects-normal/x86_64/Zzz-primary.d",
+    "diagnostics" : "/Users/kw/项目/Zzz/build_data/Build/Intermediates.noindex/Zzz.build/Release/Zzz.build/Objects-normal/x86_64/Zzz-primary.dia",
+    "emit-module-dependencies" : "/Users/kw/项目/Zzz/build_data/Build/Intermediates.noindex/Zzz.build/Release/Zzz.build/Objects-normal/x86_64/Zzz-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/kw/项目/Zzz/build_data/Build/Intermediates.noindex/Zzz.build/Release/Zzz.build/Objects-normal/x86_64/Zzz-primary-emit-module.dia",
+    "pch" : "/Users/kw/项目/Zzz/build_data/Build/Intermediates.noindex/Zzz.build/Release/Zzz.build/Objects-normal/x86_64/Zzz-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/kw/项目/Zzz/build_data/Build/Intermediates.noindex/Zzz.build/Release/Zzz.build/Objects-normal/x86_64/Zzz-primary.swiftdeps"
+  },
+  "/Users/kw/项目/Zzz/Sources/AppDelegate.swift" : {
+    "index-unit-output-path" : "/Zzz.build/Release/Zzz.build/Objects-normal/x86_64/AppDelegate.o",
+    "llvm-bc" : "/Users/kw/项目/Zzz/build_data/Build/Intermediates.noindex/Zzz.build/Release/Zzz.build/Objects-normal/x86_64/AppDelegate.bc",
+    "object" : "/Users/kw/项目/Zzz/build_data/Build/Intermediates.noindex/Zzz.build/Release/Zzz.build/Objects-normal/x86_64/AppDelegate.o"
+  },
+  "/Users/kw/项目/Zzz/Sources/BedtimeManager.swift" : {
+    "index-unit-output-path" : "/Zzz.build/Release/Zzz.build/Objects-normal/x86_64/BedtimeManager.o",
+    "llvm-bc" : "/Users/kw/项目/Zzz/build_data/Build/Intermediates.noindex/Zzz.build/Release/Zzz.build/Objects-normal/x86_64/BedtimeManager.bc",
+    "object" : "/Users/kw/项目/Zzz/build_data/Build/Intermediates.noindex/Zzz.build/Release/Zzz.build/Objects-normal/x86_64/BedtimeManager.o"
+  },
+  "/Users/kw/项目/Zzz/Sources/PopupView.swift" : {
+    "index-unit-output-path" : "/Zzz.build/Release/Zzz.build/Objects-normal/x86_64/PopupView.o",
+    "llvm-bc" : "/Users/kw/项目/Zzz/build_data/Build/Intermediates.noindex/Zzz.build/Release/Zzz.build/Objects-normal/x86_64/PopupView.bc",
+    "object" : "/Users/kw/项目/Zzz/build_data/Build/Intermediates.noindex/Zzz.build/Release/Zzz.build/Objects-normal/x86_64/PopupView.o"
+  },
+  "/Users/kw/项目/Zzz/Sources/StatusBarController.swift" : {
+    "index-unit-output-path" : "/Zzz.build/Release/Zzz.build/Objects-normal/x86_64/StatusBarController.o",
+    "llvm-bc" : "/Users/kw/项目/Zzz/build_data/Build/Intermediates.noindex/Zzz.build/Release/Zzz.build/Objects-normal/x86_64/StatusBarController.bc",
+    "object" : "/Users/kw/项目/Zzz/build_data/Build/Intermediates.noindex/Zzz.build/Release/Zzz.build/Objects-normal/x86_64/StatusBarController.o"
+  },
+  "/Users/kw/项目/Zzz/Sources/ZzzApp.swift" : {
+    "index-unit-output-path" : "/Zzz.build/Release/Zzz.build/Objects-normal/x86_64/ZzzApp.o",
+    "llvm-bc" : "/Users/kw/项目/Zzz/build_data/Build/Intermediates.noindex/Zzz.build/Release/Zzz.build/Objects-normal/x86_64/ZzzApp.bc",
+    "object" : "/Users/kw/项目/Zzz/build_data/Build/Intermediates.noindex/Zzz.build/Release/Zzz.build/Objects-normal/x86_64/ZzzApp.o"
+  }
+}
