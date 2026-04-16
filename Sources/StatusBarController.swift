@@ -1,5 +1,6 @@
 import AppKit
 import SwiftUI
+import Observation
 
 final class StatusBarController: NSObject {
     private let manager = BedtimeManager.shared
@@ -11,9 +12,28 @@ final class StatusBarController: NSObject {
         super.init()
         configureStatusItem()
         configurePopover()
+        
+        // 使用 withObservationTracking 监听 BedtimeManager 的变化
+        startObservation()
+        
         refresh()
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             self?.refresh()
+        }
+    }
+
+    private func startObservation() {
+        withObservationTracking {
+            _ = manager.events
+            _ = manager.isCompactMode
+            _ = manager.showSeconds
+            _ = manager.warnWhenNear
+            _ = manager.currentTime
+        } onChange: { [weak self] in
+            DispatchQueue.main.async {
+                self?.refresh()
+                self?.startObservation() // 重新订阅
+            }
         }
     }
 
@@ -28,46 +48,39 @@ final class StatusBarController: NSObject {
     private func configurePopover() {
         popover.behavior = .transient
         popover.animates = true
-        popover.contentSize = NSSize(width: 280, height: 450)
+        popover.contentSize = NSSize(width: 320, height: 480)
         popover.contentViewController = NSHostingController(rootView: PopupView())
     }
 
     func refresh() {
         guard let button = statusItem.button else { return }
 
-        let text = manager.isCompactMode ? manager.formattedRemainingTime : "  \(manager.formattedRemainingTime)"
-        let font = NSFont.monospacedDigitSystemFont(ofSize: 13, weight: .medium)
-        
-        if manager.isCompactMode {
-            button.image = nil
-        } else {
-            let image = NSImage(systemSymbolName: "bed.double.badge.checkmark.fill", accessibilityDescription: nil)
-            image?.isTemplate = true
-            button.image = image
-            button.imageScaling = .scaleProportionallyDown
+        let rawText = manager.formattedRemainingTime
+        let textColor: NSColor = manager.shouldShowRed ? .systemRed : .labelColor
+        let textFont = NSFont.monospacedDigitSystemFont(ofSize: 14, weight: .regular)
+
+        let fullTitle = NSMutableAttributedString()
+
+        if !manager.isCompactMode {
+            let emoji = manager.nearestEvent()?.event.emoji ?? "🔔"
+            fullTitle.append(NSAttributedString(string: emoji, attributes: [
+                .font: NSFont.systemFont(ofSize: 14),
+                .foregroundColor: textColor
+            ]))
+
+            fullTitle.append(NSAttributedString(string: " ", attributes: [
+                .font: textFont,
+                .kern: 2.0
+            ]))
         }
-        
-        if manager.shouldShowRed {
-            // 1. 设置文本颜色
-            let attributes: [NSAttributedString.Key: Any] = [
-                .font: font,
-                .foregroundColor: NSColor.systemRed
-            ]
-            button.attributedTitle = NSAttributedString(string: text, attributes: attributes)
-            
-            // 2. 设置图标颜色 (手动染色)
-            if !manager.isCompactMode, let baseImage = button.image {
-                button.image = baseImage.tinted(with: .systemRed)
-            }
-        } else {
-            button.attributedTitle = NSAttributedString(string: "")
-            button.title = text
-            button.font = font
-            if !manager.isCompactMode {
-                button.image?.isTemplate = true
-            }
-            button.contentTintColor = nil
-        }
+
+        fullTitle.append(NSAttributedString(string: rawText, attributes: [
+            .font: textFont,
+            .foregroundColor: textColor
+        ]))
+
+        button.attributedTitle = fullTitle
+        button.image = nil
     }
 
     @objc private func handleStatusItemClick() {
@@ -96,19 +109,5 @@ final class StatusBarController: NSObject {
 
     deinit {
         timer?.invalidate()
-    }
-}
-
-extension NSImage {
-    func tinted(with color: NSColor) -> NSImage {
-        let newImage = NSImage(size: size)
-        newImage.lockFocus()
-        color.set()
-        let rect = NSRect(origin: .zero, size: size)
-        draw(in: rect, from: rect, operation: .sourceOver, fraction: 1.0)
-        rect.fill(using: .sourceAtop)
-        newImage.unlockFocus()
-        newImage.isTemplate = false
-        return newImage
     }
 }

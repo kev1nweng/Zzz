@@ -9,13 +9,14 @@ options:
 settings:
   base:
     PRODUCT_NAME: Zzz
-    MARKETING_VERSION: "0.1.0"
-    CURRENT_PROJECT_VERSION: "1"
+    MARKETING_VERSION: "0.2.0"
+    CURRENT_PROJECT_VERSION: "2"
     SWIFT_VERSION: "5.9"
     MACOSX_DEPLOYMENT_TARGET: "14.0"
     CODE_SIGN_IDENTITY: "-"
     CODE_SIGN_STYLE: Manual
     DEVELOPMENT_TEAM: ""
+    CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION: "YES"
 
 targets:
   Zzz:
@@ -48,7 +49,7 @@ targets:
       - path: Sources/BedtimeManager.swift
     settings:
       base:
-        PRODUCT_NAME: ZzzWidgetExtension
+        PRODUCT_NAME: ZzzWidget
         PRODUCT_BUNDLE_IDENTIFIER: space.kev1nweng.zzz.widget
         INFOPLIST_FILE: Resources/Widget-Info.plist
         CODE_SIGN_ENTITLEMENTS: Resources/Zzz.entitlements
@@ -60,12 +61,13 @@ schemes:
   Zzz:
     build:
       targets:
-        Zzz: [run, test, profile, analyze]
+        Zzz: all
+        ZzzWidget: [run, test, profile, analyze, archive]
     run:
       target: Zzz
   ZzzWidget:
     build:
       targets:
-        ZzzWidget: [run]
+        ZzzWidget: all
     run:
       target: ZzzWidget

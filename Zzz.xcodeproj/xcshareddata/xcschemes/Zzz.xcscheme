@@ -11,13 +11,27 @@
             buildForTesting = "YES"
             buildForRunning = "YES"
             buildForProfiling = "YES"
-            buildForArchiving = "NO"
+            buildForArchiving = "YES"
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "7018F4350AC955C5A66593C5"
                BuildableName = "Zzz.app"
                BlueprintName = "Zzz"
+               ReferencedContainer = "container:Zzz.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "5BF9D43B7D26423B318C8581"
+               BuildableName = "ZzzWidget.appex"
+               BlueprintName = "ZzzWidget"
                ReferencedContainer = "container:Zzz.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
