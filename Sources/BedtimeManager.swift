@@ -54,8 +54,9 @@ struct CountdownEvent: Identifiable, Codable, Equatable {
     }
 }
 
+@MainActor
 @Observable
-final class BedtimeManager {
+final class BedtimeManager: Sendable {
     static let shared = BedtimeManager()
 
     var events: [CountdownEvent] = [] { didSet { save() } }

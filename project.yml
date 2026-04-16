@@ -2,8 +2,8 @@ name: Zzz
 options:
   bundleIdPrefix: space.kev1nweng
   deploymentTarget:
-    macOS: "14.0"
-  xcodeVersion: "15.0"
+    macOS: "26.0"
+  xcodeVersion: "16.0"
   generateEmptyDirectories: true
 
 settings:
@@ -11,8 +11,8 @@ settings:
     PRODUCT_NAME: Zzz
     MARKETING_VERSION: "0.2.0"
     CURRENT_PROJECT_VERSION: "2"
-    SWIFT_VERSION: "5.9"
-    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    SWIFT_VERSION: "6.0"
+    MACOSX_DEPLOYMENT_TARGET: "26.0"
     CODE_SIGN_IDENTITY: "-"
     CODE_SIGN_STYLE: Manual
     DEVELOPMENT_TEAM: ""

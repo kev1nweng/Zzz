@@ -2,11 +2,12 @@ import AppKit
 import SwiftUI
 import Observation
 
+@MainActor
 final class StatusBarController: NSObject {
     private let manager = BedtimeManager.shared
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     private let popover = NSPopover()
-    private var timer: Timer?
+    nonisolated(unsafe) private var timer: Timer?
 
     override init() {
         super.init()

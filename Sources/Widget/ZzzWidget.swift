@@ -3,45 +3,62 @@ import SwiftUI
 
 struct Provider: TimelineProvider {
     func placeholder(in context: Context) -> BedtimeEntry {
-        let manager = BedtimeManager.shared
-        manager.reloadData()
         return BedtimeEntry(
             date: Date(),
-            events: manager.events,
-            showSeconds: manager.showSeconds,
-            warnWhenNear: manager.warnWhenNear,
-            isCompactMode: manager.isCompactMode
+            events: loadEvents(),
+            showSeconds: loadShowSeconds(),
+            warnWhenNear: loadWarnWhenNear(),
+            isCompactMode: loadIsCompactMode()
         )
     }
 
     func getSnapshot(in context: Context, completion: @escaping (BedtimeEntry) -> ()) {
-        let manager = BedtimeManager.shared
-        manager.reloadData()
         let entry = BedtimeEntry(
             date: Date(),
-            events: manager.events,
-            showSeconds: manager.showSeconds,
-            warnWhenNear: manager.warnWhenNear,
-            isCompactMode: manager.isCompactMode
+            events: loadEvents(),
+            showSeconds: loadShowSeconds(),
+            warnWhenNear: loadWarnWhenNear(),
+            isCompactMode: loadIsCompactMode()
         )
         completion(entry)
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-        let manager = BedtimeManager.shared
-        manager.reloadData()
-        
         let currentDate = Date()
         let nextUpdate = currentDate.addingTimeInterval(900)
         let entry = BedtimeEntry(
             date: currentDate,
-            events: manager.events,
-            showSeconds: manager.showSeconds,
-            warnWhenNear: manager.warnWhenNear,
-            isCompactMode: manager.isCompactMode
+            events: loadEvents(),
+            showSeconds: loadShowSeconds(),
+            warnWhenNear: loadWarnWhenNear(),
+            isCompactMode: loadIsCompactMode()
         )
         let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
         completion(timeline)
+    }
+
+    private func loadEvents() -> [CountdownEvent] {
+        let defaults = UserDefaults(suiteName: "group.space.kev1nweng.zzz")!
+        guard let data = defaults.data(forKey: "events"),
+              let events = try? JSONDecoder().decode([CountdownEvent].self, from: data) else {
+            return []
+        }
+        return events
+    }
+
+    private func loadShowSeconds() -> Bool {
+        let defaults = UserDefaults(suiteName: "group.space.kev1nweng.zzz")!
+        return defaults.bool(forKey: "showSeconds")
+    }
+
+    private func loadWarnWhenNear() -> Bool {
+        let defaults = UserDefaults(suiteName: "group.space.kev1nweng.zzz")!
+        return defaults.bool(forKey: "warnWhenNear")
+    }
+
+    private func loadIsCompactMode() -> Bool {
+        let defaults = UserDefaults(suiteName: "group.space.kev1nweng.zzz")!
+        return defaults.bool(forKey: "isCompactMode")
     }
 }
 
@@ -136,7 +153,7 @@ struct ZzzWidgetEntryView : View {
                 }
             }
         }
-        .containerBackground(.ultraThinMaterial, for: .widget)
+        .glassEffect(.regular, in: .rect(cornerRadius: 22))
     }
 }
 
