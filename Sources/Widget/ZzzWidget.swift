@@ -153,7 +153,7 @@ struct ZzzWidgetEntryView : View {
                 }
             }
         }
-        .glassEffect(.regular, in: .rect(cornerRadius: 22))
+        .glassEffect(.regular)
     }
 }
 
